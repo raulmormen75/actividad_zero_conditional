@@ -143,7 +143,7 @@ const appData = {
           "Usa coma si la cláusula con if/when va primero. No la uses cuando el resultado va al inicio.",
         exampleEn: "If it rains, the game stops. / The game stops if it rains.",
         exampleEs:
-          "If it rains, the game stops. / The game stops if it rains.",
+          "Si llueve, el juego se detiene. / El juego se detiene si llueve.",
         children: [],
       },
       {
@@ -159,7 +159,7 @@ const appData = {
         summaryEs:
           "Con frecuencia se mezclan formas de futuro, se olvida el presente simple o se coloca mal la coma.",
         exampleEn: "Incorrect: If you heat ice, it will melt.",
-        exampleEs: "Incorrecto: If you heat ice, it will melt.",
+        exampleEs: "Incorrecto: Si calientas hielo, se derretirá.",
         children: [],
       },
       {

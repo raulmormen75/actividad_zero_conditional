@@ -24,6 +24,12 @@ const uiState = {
   lastFocusedElement: null,
   lastScrollY: 0,
   headerScrollFrame: null,
+  speechPlayback: {
+    isPlaying: false,
+    text: "",
+    rate: 1,
+    utterance: null,
+  },
   matchingFeedback: {
     type: "info",
     message: "Selecciona un concepto y luego toca la definición que le corresponde.",
@@ -84,6 +90,10 @@ function cacheDom() {
   dom.modalExampleEs = document.getElementById("concept-example-es");
   dom.modalExampleEnWrap = document.getElementById("concept-example-en-wrap");
   dom.modalExampleEsWrap = document.getElementById("concept-example-es-wrap");
+  dom.playExampleBtn = document.getElementById("play-example-btn");
+  dom.playExampleSlowBtn = document.getElementById("play-example-slow-btn");
+  dom.conceptAudioControls = document.getElementById("concept-audio-controls");
+  dom.conceptAudioNote = document.getElementById("concept-audio-note");
   dom.modalCloseBtn = document.getElementById("close-modal-btn");
 }
 
@@ -231,6 +241,8 @@ function bindStaticEvents() {
   });
 
   dom.modalCloseBtn.addEventListener("click", () => closeConceptModal());
+  dom.playExampleBtn.addEventListener("click", () => playConceptExampleAudio(1));
+  dom.playExampleSlowBtn.addEventListener("click", () => playConceptExampleAudio(0.5));
   window.addEventListener("keydown", handleGlobalKeydown);
   window.addEventListener("resize", handleResponsiveRedraw);
   window.addEventListener("scroll", handleWindowScroll, { passive: true });
@@ -269,8 +281,6 @@ function updateHeaderVisibility(forceSync = false) {
 
   const isDesktopHeader = window.innerWidth > 768;
   const currentScrollY = Math.max(window.scrollY || 0, 0);
-  const previousScrollY = uiState.lastScrollY;
-  const delta = currentScrollY - previousScrollY;
 
   if (!isDesktopHeader) {
     dom.appHeader.classList.remove("is-compact", "is-stats-hidden");
@@ -278,15 +288,9 @@ function updateHeaderVisibility(forceSync = false) {
     return;
   }
 
-  dom.appHeader.classList.toggle("is-compact", currentScrollY > 16);
-
-  if (currentScrollY <= 72) {
-    dom.appHeader.classList.remove("is-stats-hidden");
-  } else if (currentScrollY > 144 && (forceSync ? currentScrollY > 220 : delta > 3)) {
-    dom.appHeader.classList.add("is-stats-hidden");
-  } else if (forceSync ? currentScrollY <= 144 : delta < -3) {
-    dom.appHeader.classList.remove("is-stats-hidden");
-  }
+  const shouldCompactHeader = forceSync ? currentScrollY > 28 : currentScrollY > 36;
+  dom.appHeader.classList.toggle("is-compact", shouldCompactHeader);
+  dom.appHeader.classList.toggle("is-stats-hidden", shouldCompactHeader);
 
   uiState.lastScrollY = currentScrollY;
 }
@@ -559,7 +563,9 @@ function openConceptModal(nodeId) {
     return;
   }
 
+  stopConceptExampleAudio();
   uiState.lastFocusedElement = document.activeElement;
+  dom.modal.dataset.nodeId = node.id;
   dom.modalTitle.textContent = node.title;
   dom.modalSummaryEn.textContent = node.summaryEn || "";
   dom.modalSummaryEs.textContent = node.summaryEs || "";
@@ -567,6 +573,10 @@ function openConceptModal(nodeId) {
   dom.modalExampleEs.textContent = node.exampleEs || "";
   dom.modalExampleEnWrap.classList.toggle("is-hidden", !node.exampleEn);
   dom.modalExampleEsWrap.classList.toggle("is-hidden", !node.exampleEs);
+  dom.playExampleBtn.disabled = !node.exampleEn;
+  dom.playExampleSlowBtn.disabled = !node.exampleEn;
+  dom.playExampleBtn.setAttribute("aria-pressed", "false");
+  dom.playExampleSlowBtn.setAttribute("aria-pressed", "false");
   dom.modal.classList.add("is-open");
   dom.modal.setAttribute("aria-hidden", "false");
   document.body.style.overflow = "hidden";
@@ -574,6 +584,7 @@ function openConceptModal(nodeId) {
 }
 
 function closeConceptModal() {
+  stopConceptExampleAudio();
   dom.modal.classList.remove("is-open");
   dom.modal.setAttribute("aria-hidden", "true");
   document.body.style.overflow = "";
@@ -581,6 +592,137 @@ function closeConceptModal() {
   if (uiState.lastFocusedElement && typeof uiState.lastFocusedElement.focus === "function") {
     uiState.lastFocusedElement.focus();
   }
+}
+
+function playConceptExampleAudio(rate) {
+  const exampleText = dom.modalExampleEn ? dom.modalExampleEn.textContent.trim() : "";
+  if (!exampleText) {
+    return;
+  }
+
+  if (!("speechSynthesis" in window) || typeof window.SpeechSynthesisUtterance === "undefined") {
+    showToast("La pronunciación no está disponible en este navegador.");
+    announceStatus("La pronunciación no está disponible en este navegador.");
+    return;
+  }
+
+  const alreadyPlayingSameClip =
+    uiState.speechPlayback.isPlaying &&
+    uiState.speechPlayback.text === exampleText &&
+    uiState.speechPlayback.rate === rate;
+
+  if (alreadyPlayingSameClip) {
+    stopConceptExampleAudio();
+    return;
+  }
+
+  stopConceptExampleAudio();
+
+  const utterance = new SpeechSynthesisUtterance(exampleText);
+  utterance.lang = "en-US";
+  utterance.rate = rate;
+  utterance.pitch = 1.08;
+  utterance.volume = 1;
+
+  const preferredVoice = getPreferredEnglishVoice();
+  if (preferredVoice) {
+    utterance.voice = preferredVoice;
+  }
+
+  uiState.speechPlayback = {
+    isPlaying: true,
+    text: exampleText,
+    rate,
+    utterance,
+  };
+
+  updateConceptAudioButtons(rate);
+
+  utterance.onend = () => {
+    stopConceptExampleAudio(false);
+  };
+
+  utterance.onerror = () => {
+    stopConceptExampleAudio(false);
+    showToast("No se pudo reproducir el ejemplo en este momento.");
+    announceStatus("No se pudo reproducir el ejemplo en este momento.");
+  };
+
+  window.speechSynthesis.cancel();
+  window.speechSynthesis.speak(utterance);
+  announceStatus(rate === 0.5 ? "Reproducción lenta del ejemplo en inglés." : "Reproducción del ejemplo en inglés.");
+}
+
+function stopConceptExampleAudio(cancelSpeech = true) {
+  if (cancelSpeech && "speechSynthesis" in window) {
+    window.speechSynthesis.cancel();
+  }
+
+  uiState.speechPlayback = {
+    isPlaying: false,
+    text: "",
+    rate: 1,
+    utterance: null,
+  };
+
+  updateConceptAudioButtons(null);
+}
+
+function updateConceptAudioButtons(activeRate) {
+  const buttons = [
+    { element: dom.playExampleBtn, rate: 1 },
+    { element: dom.playExampleSlowBtn, rate: 0.5 },
+  ];
+
+  buttons.forEach(({ element, rate }) => {
+    if (!element) {
+      return;
+    }
+
+    const isPlaying = activeRate === rate;
+    element.classList.toggle("is-playing", isPlaying);
+    element.setAttribute("aria-pressed", String(isPlaying));
+  });
+}
+
+function getPreferredEnglishVoice() {
+  const availableVoices =
+    "speechSynthesis" in window && typeof window.speechSynthesis.getVoices === "function"
+      ? window.speechSynthesis.getVoices()
+      : [];
+
+  if (!availableVoices.length) {
+    return null;
+  }
+
+  const preferredNameFragments = [
+    "Jenny",
+    "Samantha",
+    "Ava",
+    "Aria",
+    "Michelle",
+    "Zira",
+    "Emma",
+    "Kimberly",
+    "Kendra",
+    "Joanna",
+    "Salli",
+    "Ivy",
+    "Google US English",
+  ];
+
+  const englishVoices = availableVoices.filter((voice) => /^en(-|_)/i.test(voice.lang || ""));
+  const americanVoices = englishVoices.filter((voice) => /en[-_]US/i.test(voice.lang || ""));
+  const preferredPool = americanVoices.length ? americanVoices : englishVoices;
+
+  for (const fragment of preferredNameFragments) {
+    const match = preferredPool.find((voice) => voice.name.includes(fragment));
+    if (match) {
+      return match;
+    }
+  }
+
+  return preferredPool[0] || null;
 }
 
 function renderMatchingGame() {
