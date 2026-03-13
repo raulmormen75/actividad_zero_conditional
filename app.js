@@ -22,6 +22,8 @@ const dom = {};
 const uiState = {
   toastTimer: null,
   lastFocusedElement: null,
+  lastScrollY: 0,
+  headerScrollFrame: null,
   matchingFeedback: {
     type: "info",
     message: "Selecciona un concepto y luego toca la definición que le corresponde.",
@@ -56,6 +58,7 @@ function initApp() {
 }
 
 function cacheDom() {
+  dom.appHeader = document.querySelector(".app-header");
   dom.statTotal = document.getElementById("stat-total");
   dom.statCorrect = document.getElementById("stat-correct");
   dom.statErrors = document.getElementById("stat-errors");
@@ -230,6 +233,8 @@ function bindStaticEvents() {
   dom.modalCloseBtn.addEventListener("click", () => closeConceptModal());
   window.addEventListener("keydown", handleGlobalKeydown);
   window.addEventListener("resize", handleResponsiveRedraw);
+  window.addEventListener("scroll", handleWindowScroll, { passive: true });
+  updateHeaderVisibility(true);
 }
 
 function handleGlobalKeydown(event) {
@@ -239,9 +244,51 @@ function handleGlobalKeydown(event) {
 }
 
 function handleResponsiveRedraw() {
+  updateHeaderVisibility(true);
+
   if (state.currentSection === "matching") {
     drawMatchingConnectors();
   }
+}
+
+function handleWindowScroll() {
+  if (uiState.headerScrollFrame) {
+    return;
+  }
+
+  uiState.headerScrollFrame = window.requestAnimationFrame(() => {
+    updateHeaderVisibility();
+    uiState.headerScrollFrame = null;
+  });
+}
+
+function updateHeaderVisibility(forceSync = false) {
+  if (!dom.appHeader) {
+    return;
+  }
+
+  const isDesktopHeader = window.innerWidth > 768;
+  const currentScrollY = Math.max(window.scrollY || 0, 0);
+  const previousScrollY = uiState.lastScrollY;
+  const delta = currentScrollY - previousScrollY;
+
+  if (!isDesktopHeader) {
+    dom.appHeader.classList.remove("is-compact", "is-stats-hidden");
+    uiState.lastScrollY = currentScrollY;
+    return;
+  }
+
+  dom.appHeader.classList.toggle("is-compact", currentScrollY > 16);
+
+  if (currentScrollY <= 72) {
+    dom.appHeader.classList.remove("is-stats-hidden");
+  } else if (currentScrollY > 144 && (forceSync ? currentScrollY > 220 : delta > 3)) {
+    dom.appHeader.classList.add("is-stats-hidden");
+  } else if (forceSync ? currentScrollY <= 144 : delta < -3) {
+    dom.appHeader.classList.remove("is-stats-hidden");
+  }
+
+  uiState.lastScrollY = currentScrollY;
 }
 
 function changeSection(direction) {

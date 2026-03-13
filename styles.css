@@ -113,16 +113,19 @@ a {
     background: rgba(248, 250, 252, 0.92);
     backdrop-filter: blur(18px);
     border-bottom: 1px solid rgba(28, 30, 90, 0.08);
+    transition: background-color var(--transition-base), border-color var(--transition-base),
+        box-shadow var(--transition-base);
 }
 
 .header-shell {
     position: relative;
     z-index: 1;
     display: grid;
-    grid-template-columns: minmax(0, 1.3fr) minmax(320px, 0.9fr);
-    gap: 24px;
+    grid-template-columns: minmax(0, 1.45fr) minmax(280px, 388px);
+    gap: 18px;
     align-items: center;
     padding: 18px 0;
+    transition: grid-template-columns var(--transition-base), gap var(--transition-base), padding var(--transition-base);
 }
 
 .brand-block {
@@ -140,6 +143,7 @@ a {
     border: 1px solid rgba(28, 30, 90, 0.1);
     box-shadow: 0 14px 28px rgba(28, 30, 90, 0.12);
     flex-shrink: 0;
+    transition: width var(--transition-base), height var(--transition-base), border-radius var(--transition-base);
 }
 
 .brand-copy {
@@ -170,6 +174,7 @@ a {
     font-weight: 800;
     letter-spacing: -0.03em;
     color: var(--ifr-blue-dark);
+    transition: font-size var(--transition-base);
 }
 
 .brand-subtitle {
@@ -177,6 +182,7 @@ a {
     flex-wrap: wrap;
     gap: 10px;
     margin-top: 10px;
+    transition: margin-top var(--transition-base);
 }
 
 .flag-label,
@@ -216,20 +222,28 @@ a {
 }
 
 .stats-panel {
+    justify-self: end;
+    width: min(100%, 388px);
     padding: 18px;
     border-radius: 24px;
+    max-height: 260px;
+    overflow: hidden;
+    transform-origin: top right;
+    transition: opacity var(--transition-base), transform var(--transition-base), max-height var(--transition-base),
+        width var(--transition-base), padding var(--transition-base), border-color var(--transition-base),
+        box-shadow var(--transition-base), margin var(--transition-base);
 }
 
 .stats-header {
     display: flex;
     justify-content: space-between;
-    gap: 16px;
+    gap: 12px;
     align-items: flex-start;
-    margin-bottom: 16px;
+    margin-bottom: 12px;
 }
 
 .stats-header h2 {
-    font-size: 1.05rem;
+    font-size: 0.98rem;
     font-weight: 800;
     color: var(--ifr-blue-dark);
 }
@@ -237,11 +251,12 @@ a {
 .stats-grid {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 12px;
+    gap: 10px;
 }
 
 .stat-card {
-    padding: 14px 16px;
+    min-height: 92px;
+    padding: 12px 14px;
     border-radius: 16px;
     background: linear-gradient(180deg, rgba(28, 30, 90, 0.04) 0%, rgba(248, 250, 252, 0.9) 100%);
     border: 1px solid rgba(28, 30, 90, 0.08);
@@ -249,7 +264,7 @@ a {
 
 .stat-card span {
     display: block;
-    font-size: 0.84rem;
+    font-size: 0.8rem;
     color: var(--text-body);
     font-weight: 700;
 }
@@ -257,13 +272,57 @@ a {
 .stat-card strong {
     display: block;
     margin-top: 6px;
-    font-size: 1.65rem;
+    font-size: 1.45rem;
     line-height: 1;
     color: var(--ifr-blue-dark);
 }
 
 .stat-card--accent {
     background: linear-gradient(145deg, rgba(44, 229, 30, 0.2), rgba(20, 20, 58, 0.05));
+}
+
+.app-header.is-compact {
+    box-shadow: 0 10px 24px rgba(20, 20, 58, 0.06);
+}
+
+.app-header.is-compact .header-shell {
+    gap: 16px;
+    padding: 12px 0;
+}
+
+.app-header.is-compact .brand-logo {
+    width: 68px;
+    height: 68px;
+    border-radius: 18px;
+}
+
+.app-header.is-compact .brand-copy h1 {
+    font-size: clamp(1.72rem, 2.3vw, 2.26rem);
+}
+
+.app-header.is-compact .brand-subtitle {
+    margin-top: 8px;
+}
+
+.app-header.is-stats-hidden .header-shell {
+    grid-template-columns: minmax(0, 1fr) 0px;
+}
+
+.app-header.is-stats-hidden .stats-panel {
+    min-width: 0;
+    width: 0;
+    max-height: 0;
+    margin: 0;
+    padding: 0;
+    opacity: 0;
+    transform: translateY(-18px) scale(0.96);
+    border-color: transparent;
+    box-shadow: none;
+    pointer-events: none;
+}
+
+.app-header.is-stats-hidden .stats-panel > * {
+    opacity: 0;
 }
 
 .app-main {
@@ -1146,6 +1205,10 @@ button:focus-visible,
     .stats-panel {
         width: 100%;
     }
+
+    .app-header.is-stats-hidden .header-shell {
+        grid-template-columns: 1fr;
+    }
 }
 
 @media (max-width: 900px) {
@@ -1181,6 +1244,11 @@ button:focus-visible,
 @media (max-width: 768px) {
     .app-header {
         position: static;
+    }
+
+    .app-header.is-compact,
+    .app-header.is-stats-hidden {
+        box-shadow: none;
     }
 
     .brand-block {
