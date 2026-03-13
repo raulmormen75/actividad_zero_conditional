@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 57 40" role="img" aria-labelledby="usTitle usDesc">
+  <title id="usTitle">Bandera de Estados Unidos</title>
+  <desc id="usDesc">Bandera rectangular con franjas rojas y blancas y un cantón azul.</desc>
+  <rect width="57" height="40" rx="4" fill="#fff"/>
+  <g fill="#B22234">
+    <rect width="57" height="3.08" y="0"/>
+    <rect width="57" height="3.08" y="6.16"/>
+    <rect width="57" height="3.08" y="12.32"/>
+    <rect width="57" height="3.08" y="18.48"/>
+    <rect width="57" height="3.08" y="24.64"/>
+    <rect width="57" height="3.08" y="30.8"/>
+    <rect width="57" height="3.08" y="36.92"/>
+  </g>
+  <rect width="24.5" height="21.56" rx="2.2" fill="#3C3B6E"/>
+  <g fill="#fff">
+    <circle cx="4.1" cy="4.2" r="1.05"/>
+    <circle cx="9.1" cy="4.2" r="1.05"/>
+    <circle cx="14.1" cy="4.2" r="1.05"/>
+    <circle cx="19.1" cy="4.2" r="1.05"/>
+    <circle cx="6.6" cy="8.2" r="1.05"/>
+    <circle cx="11.6" cy="8.2" r="1.05"/>
+    <circle cx="16.6" cy="8.2" r="1.05"/>
+    <circle cx="21.1" cy="8.2" r="1.05"/>
+    <circle cx="4.1" cy="12.1" r="1.05"/>
+    <circle cx="9.1" cy="12.1" r="1.05"/>
+    <circle cx="14.1" cy="12.1" r="1.05"/>
+    <circle cx="19.1" cy="12.1" r="1.05"/>
+    <circle cx="6.6" cy="16.1" r="1.05"/>
+    <circle cx="11.6" cy="16.1" r="1.05"/>
+    <circle cx="16.6" cy="16.1" r="1.05"/>
+    <circle cx="21.1" cy="16.1" r="1.05"/>
+  </g>
+</svg>

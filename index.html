@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zero Conditional | Instituto Fernando Ramirez</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="icon"
+        href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%231C1E5A'/%3E%3Cpath d='M16 22h32v6H16zm0 14h32v6H16z' fill='%232CE51E'/%3E%3Cpath d='M18 30h28v4H18z' fill='%23fff'/%3E%3C/svg%3E">
+    <link rel="stylesheet" href="styles.css?v=3">
+</head>
+<body>
+    <div class="page-glow page-glow--left" aria-hidden="true"></div>
+    <div class="page-glow page-glow--right" aria-hidden="true"></div>
+
+    <header class="app-header">
+        <div class="shell header-shell">
+            <div class="brand-block">
+                <img src="assets/img/logo-ifr.png" alt="Logo del Instituto Fernando Ramirez" class="brand-logo">
+                <div class="brand-copy">
+                    <p class="brand-kicker">Instituto Fernando Ramirez</p>
+                    <h1>Zero Conditional</h1>
+                    <div class="brand-subtitle">
+                        <span class="flag-label">
+                            <img src="assets/svg/us-flag.svg" alt="Bandera de Estados Unidos">
+                            Interactive review, practice and evaluation
+                        </span>
+                        <span class="flag-label">
+                            <img src="assets/svg/mx-flag.svg" alt="Bandera de México">
+                            Repaso, práctica y evaluación interactiva
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <aside class="stats-panel" aria-label="Panel de progreso y puntuación">
+                <div class="stats-header">
+                    <div>
+                        <p class="stats-kicker">Progreso actual</p>
+                        <h2>Seguimiento en tiempo real</h2>
+                    </div>
+                    <button type="button" class="ghost-button" id="reset-progress-btn">
+                        Reiniciar progreso
+                    </button>
+                </div>
+                <div class="stats-grid">
+                    <article class="stat-card">
+                        <span>Total de ejercicios</span>
+                        <strong id="stat-total">30</strong>
+                    </article>
+                    <article class="stat-card">
+                        <span>Aciertos</span>
+                        <strong id="stat-correct">0</strong>
+                    </article>
+                    <article class="stat-card">
+                        <span>Errores</span>
+                        <strong id="stat-errors">0</strong>
+                    </article>
+                    <article class="stat-card stat-card--accent">
+                        <span>Puntuación actual</span>
+                        <strong id="stat-score">0</strong>
+                    </article>
+                </div>
+            </aside>
+        </div>
+    </header>
+
+    <main class="shell app-main">
+        <section class="overview-card" aria-labelledby="overview-title">
+            <div class="overview-copy">
+                <p class="section-kicker">Aplicación IFR</p>
+                <h2 id="overview-title">Explora, practica y evalúa el zero conditional sin salir de una sola vista.</h2>
+                <p>
+                    Esta app reúne un mapa mental navegable, una actividad de relación de conceptos y una evaluación de
+                    15 reactivos. El puntaje cambia con cada acierto y con cada error.
+                </p>
+            </div>
+            <div class="overview-points">
+                <div class="overview-point">
+                    <span>Mapa mental</span>
+                    <strong>17 nodos y modal bilingüe</strong>
+                </div>
+                <div class="overview-point">
+                    <span>Relación</span>
+                    <strong>15 pares con conectores verdes</strong>
+                </div>
+                <div class="overview-point">
+                    <span>Evaluación</span>
+                    <strong>15 reactivos con progreso interno</strong>
+                </div>
+            </div>
+        </section>
+
+        <section class="navigator-card" aria-label="Navegación principal de secciones">
+            <div class="section-tabs" role="tablist" aria-label="Índice de secciones">
+                <button type="button" class="tab-button" id="tab-mind-map" data-section-target="mind-map" role="tab"
+                    aria-selected="true">
+                    1. Mapa mental
+                </button>
+                <button type="button" class="tab-button" id="tab-matching" data-section-target="matching" role="tab"
+                    aria-selected="false">
+                    2. Relación de conceptos
+                </button>
+                <button type="button" class="tab-button" id="tab-quiz" data-section-target="quiz" role="tab"
+                    aria-selected="false">
+                    3. Evaluación
+                </button>
+            </div>
+            <div class="stage-controls">
+                <button type="button" class="nav-button" id="prev-section-btn">Anterior</button>
+                <button type="button" class="nav-button" id="next-section-btn">Siguiente</button>
+            </div>
+        </section>
+
+        <section class="stage-card">
+            <div class="stage-header">
+                <div>
+                    <p class="section-kicker">Ruta de trabajo</p>
+                    <h2 id="current-section-title">Mapa mental interactivo</h2>
+                </div>
+                <p id="current-section-caption" class="stage-caption">
+                    Recorre los conceptos esenciales del tema y abre cada explicación en inglés y español.
+                </p>
+            </div>
+
+            <section class="section-panel is-active" id="section-mind-map" data-section="mind-map"
+                aria-labelledby="tab-mind-map"></section>
+
+            <section class="section-panel" id="section-matching" data-section="matching" aria-labelledby="tab-matching"
+                hidden></section>
+
+            <section class="section-panel" id="section-quiz" data-section="quiz" aria-labelledby="tab-quiz" hidden>
+            </section>
+        </section>
+    </main>
+
+    <footer class="app-footer">
+        <div class="shell">
+            «Material desarrollado por el Prof. Raul Morales Mendoza».
+        </div>
+    </footer>
+
+    <div class="feedback-toast" id="feedback-toast" role="status" aria-live="polite"></div>
+    <div id="sr-status" class="sr-only" aria-live="polite"></div>
+
+    <div class="modal" id="concept-modal" aria-hidden="true">
+        <div class="modal-backdrop" data-close-modal="true"></div>
+        <div class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="concept-modal-title">
+            <button type="button" class="modal-close" id="close-modal-btn" aria-label="Cerrar ventana">
+                Cerrar
+            </button>
+            <div class="modal-header">
+                <p class="section-kicker">Detalle del concepto</p>
+                <h2 id="concept-modal-title">Zero Conditional</h2>
+            </div>
+            <div class="modal-grid">
+                <article class="modal-card">
+                    <div class="flag-heading">
+                        <img src="assets/svg/us-flag.svg" alt="Bandera de Estados Unidos">
+                        <h3>English</h3>
+                    </div>
+                    <p id="concept-summary-en"></p>
+                    <div class="example-block" id="concept-example-en-wrap">
+                        <span>Example</span>
+                        <p id="concept-example-en"></p>
+                    </div>
+                </article>
+                <article class="modal-card">
+                    <div class="flag-heading">
+                        <img src="assets/svg/mx-flag.svg" alt="Bandera de México">
+                        <h3>Español de México</h3>
+                    </div>
+                    <p id="concept-summary-es"></p>
+                    <div class="example-block" id="concept-example-es-wrap">
+                        <span>Ejemplo</span>
+                        <p id="concept-example-es"></p>
+                    </div>
+                </article>
+            </div>
+        </div>
+    </div>
+
+    <script src="data.js?v=3"></script>
+    <script src="app.js?v=3"></script>
+</body>
+</html>

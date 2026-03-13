@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 57 40" role="img" aria-labelledby="mxTitle mxDesc">
+  <title id="mxTitle">Bandera de México</title>
+  <desc id="mxDesc">Bandera rectangular con franjas verticales verde, blanca y roja.</desc>
+  <rect width="57" height="40" rx="4" fill="#fff"/>
+  <rect width="19" height="40" rx="4" fill="#006847"/>
+  <rect x="38" width="19" height="40" rx="4" fill="#CE1126"/>
+  <circle cx="28.5" cy="20" r="4.6" fill="#D5B26C"/>
+  <circle cx="28.5" cy="20" r="2.8" fill="#8C5A2B"/>
+  <path d="M28.5 15.8c1.6 0 2.9 1.3 2.9 2.9 0 1.8-1.5 3.4-2.9 4.8-1.4-1.4-2.9-3-2.9-4.8 0-1.6 1.3-2.9 2.9-2.9Z" fill="#7A5B2E"/>
+  <path d="M24.8 23.4c1.2 1.5 2.4 2.2 3.7 2.2s2.5-.7 3.7-2.2" stroke="#006847" stroke-width="1.4" fill="none" stroke-linecap="round"/>
+</svg>
