@@ -1,5 +1,9 @@
 const STORAGE_KEY = "ifr-zero-conditional-state-v1";
 const SECTION_IDS = ["mind-map", "matching", "quiz"];
+const MIND_MAP_LAYOUT_SCALE = 0.76;
+const MIND_MAP_ZOOM_MIN = 0.55;
+const MIND_MAP_ZOOM_MAX = 1.35;
+const MIND_MAP_ZOOM_STEP = 0.15;
 const SECTION_META = {
   "mind-map": {
     title: "Mapa mental interactivo",
@@ -147,6 +151,7 @@ function createDefaultState() {
     quizAttempts: {},
     matchingDefinitionOrder: shuffleArray(window.appData.matching.map((item) => item.id)),
     expandedNodeIds: [],
+    mindMapZoom: getDefaultMindMapZoom(),
   };
 }
 
@@ -190,6 +195,9 @@ function hydrateState(savedState) {
   hydrated.expandedNodeIds = Array.isArray(savedState.expandedNodeIds)
     ? Array.from(new Set(savedState.expandedNodeIds.filter((id) => expandableIds.has(id))))
     : defaults.expandedNodeIds;
+  hydrated.mindMapZoom = clampMindMapZoom(
+    Number.isFinite(Number(savedState.mindMapZoom)) ? Number(savedState.mindMapZoom) : defaults.mindMapZoom
+  );
 
   return hydrated;
 }
@@ -345,11 +353,15 @@ function renderSection(sectionId) {
 }
 
 function renderMindMap() {
-  const rootNode = window.appData.mindMap.root;
-  const visibleNodes = getVisibleMindMapNodes();
-  const connectorsMarkup = renderMindMapConnectorsMarkup(rootNode, visibleNodes);
+  const layout = getMindMapLayout();
+  const rootNode = layout.root;
+  const visibleNodes = getVisibleMindMapNodes().map((node) => layout.nodesById.get(node.id)).filter(Boolean);
+  const connectorsMarkup = renderMindMapConnectorsMarkup(layout.nodesById, rootNode, visibleNodes);
   const expandableCount = getExpandableNodeIds().size;
   const expandAllActive = expandableCount > 0 && state.expandedNodeIds.length === expandableCount;
+  const zoom = clampMindMapZoom(state.mindMapZoom);
+  const zoomPercent = Math.round(zoom * 100);
+  const defaultZoom = getDefaultMindMapZoom();
 
   dom.sectionPanels["mind-map"].innerHTML = `
     <div class="panel-header">
@@ -362,23 +374,39 @@ function renderMindMap() {
       </div>
     </div>
     <div class="mind-toolbar">
-      <button type="button" class="surface-button" data-action="expand-all" ${expandAllActive ? "disabled" : ""}>
-        Expandir todo
-      </button>
-      <button type="button" class="surface-button" data-action="collapse-all" ${state.expandedNodeIds.length === 0 ? "disabled" : ""}>
-        Cerrar todo
-      </button>
-      <button type="button" class="surface-button" data-action="center-root">
-        Centrar tema principal
-      </button>
+      <div class="mind-toolbar-group">
+        <button type="button" class="surface-button" data-action="expand-all" ${expandAllActive ? "disabled" : ""}>
+          Expandir todo
+        </button>
+        <button type="button" class="surface-button" data-action="collapse-all" ${state.expandedNodeIds.length === 0 ? "disabled" : ""}>
+          Cerrar todo
+        </button>
+        <button type="button" class="surface-button" data-action="center-root">
+          Centrar tema principal
+        </button>
+      </div>
+      <div class="mind-toolbar-group mind-toolbar-group--zoom" role="group" aria-label="Controles de zoom del mapa mental">
+        <button type="button" class="surface-button mind-zoom-button" data-action="zoom-out" ${zoom <= MIND_MAP_ZOOM_MIN ? "disabled" : ""} aria-label="Alejar mapa mental">
+          −
+        </button>
+        <span class="zoom-indicator" aria-live="polite">${zoomPercent}%</span>
+        <button type="button" class="surface-button mind-zoom-button" data-action="zoom-in" ${zoom >= MIND_MAP_ZOOM_MAX ? "disabled" : ""} aria-label="Acercar mapa mental">
+          +
+        </button>
+        <button type="button" class="surface-button" data-action="zoom-reset" ${Math.abs(zoom - defaultZoom) < 0.01 ? "disabled" : ""}>
+          Restablecer zoom
+        </button>
+      </div>
     </div>
     <div class="mind-viewport" id="mind-map-viewport" tabindex="0" aria-label="Mapa mental navegable">
-      <div class="mind-canvas" id="mind-map-canvas" style="width:${window.appData.mindMap.width}px; height:${window.appData.mindMap.height}px;">
-        <svg class="mind-connectors" id="mind-map-connectors" viewBox="0 0 ${window.appData.mindMap.width} ${window.appData.mindMap.height}" aria-hidden="true">
-          ${connectorsMarkup}
-        </svg>
-        ${renderMindNode(rootNode)}
-        ${visibleNodes.map((node) => renderMindNode(node)).join("")}
+      <div class="mind-scale-frame" style="width:${Math.round(layout.width * zoom)}px; height:${Math.round(layout.height * zoom)}px;">
+        <div class="mind-canvas" id="mind-map-canvas" style="width:${layout.width}px; height:${layout.height}px; transform: scale(${zoom});">
+          <svg class="mind-connectors" id="mind-map-connectors" viewBox="0 0 ${layout.width} ${layout.height}" aria-hidden="true">
+            ${connectorsMarkup}
+          </svg>
+          ${renderMindNode(rootNode)}
+          ${visibleNodes.map((node) => renderMindNode(node)).join("")}
+        </div>
       </div>
     </div>
   `;
@@ -416,10 +444,10 @@ function renderMindNode(node) {
   `;
 }
 
-function renderMindMapConnectorsMarkup(rootNode, visibleNodes) {
+function renderMindMapConnectorsMarkup(nodesById, rootNode, visibleNodes) {
   return visibleNodes
     .map((node) => {
-      const parentNode = mindMapNodeById.get(node.parentId) || rootNode;
+      const parentNode = nodesById.get(node.parentId) || rootNode;
       return `<path class="mind-connector" d="${buildCurvedPath(parentNode, node, node.curveSeed)}"></path>`;
     })
     .join("");
@@ -431,7 +459,7 @@ function buildCurvedPath(startNode, endNode, curveSeed) {
   const distance = Math.hypot(dx, dy) || 1;
   const normalX = -dy / distance;
   const normalY = dx / distance;
-  const bend = curveSeed * 120;
+  const bend = curveSeed * 88;
   const controlOne = {
     x: startNode.x + dx * 0.28 + normalX * bend,
     y: startNode.y + dy * 0.18 + normalY * bend,
@@ -496,11 +524,21 @@ function bindMindMapPan() {
     viewport.classList.remove("is-dragging");
   };
 
+  const onWheel = (event) => {
+    if (!event.ctrlKey && !event.metaKey) {
+      return;
+    }
+
+    event.preventDefault();
+    adjustMindMapZoom(event.deltaY < 0 ? "in" : "out");
+  };
+
   viewport.addEventListener("pointerdown", onPointerDown);
   viewport.addEventListener("pointermove", onPointerMove);
   viewport.addEventListener("pointerup", releasePointer);
   viewport.addEventListener("pointercancel", releasePointer);
   viewport.addEventListener("pointerleave", releasePointer);
+  viewport.addEventListener("wheel", onWheel, { passive: false });
 
   uiState.mindMapPanCleanup = () => {
     viewport.removeEventListener("pointerdown", onPointerDown);
@@ -508,19 +546,22 @@ function bindMindMapPan() {
     viewport.removeEventListener("pointerup", releasePointer);
     viewport.removeEventListener("pointercancel", releasePointer);
     viewport.removeEventListener("pointerleave", releasePointer);
+    viewport.removeEventListener("wheel", onWheel);
   };
 }
 
 function centerMindMap() {
   const viewport = dom.sectionPanels["mind-map"].querySelector("#mind-map-viewport");
-  const rootNode = window.appData.mindMap.root;
+  const layout = getMindMapLayout();
+  const rootNode = layout.root;
+  const zoom = clampMindMapZoom(state.mindMapZoom);
 
   if (!viewport || !rootNode) {
     return;
   }
 
-  const targetLeft = Math.max(0, rootNode.x - viewport.clientWidth / 2);
-  const targetTop = Math.max(0, rootNode.y - viewport.clientHeight / 2);
+  const targetLeft = Math.max(0, rootNode.x * zoom - viewport.clientWidth / 2);
+  const targetTop = Math.max(0, rootNode.y * zoom - viewport.clientHeight / 2);
 
   viewport.scrollTo({
     left: targetLeft,
@@ -539,6 +580,57 @@ function collapseAllNodes() {
   state.expandedNodeIds = [];
   saveState();
   renderMindMap();
+}
+
+function adjustMindMapZoom(direction) {
+  const currentZoom = clampMindMapZoom(state.mindMapZoom);
+  const nextZoom =
+    direction === "in"
+      ? clampMindMapZoom(currentZoom + MIND_MAP_ZOOM_STEP)
+      : clampMindMapZoom(currentZoom - MIND_MAP_ZOOM_STEP);
+
+  setMindMapZoom(nextZoom);
+}
+
+function resetMindMapZoom() {
+  state.mindMapZoom = getDefaultMindMapZoom();
+  uiState.shouldCenterMindMap = true;
+  saveState();
+  renderMindMap();
+}
+
+function setMindMapZoom(nextZoom) {
+  const viewport = dom.sectionPanels["mind-map"]?.querySelector("#mind-map-viewport");
+  const previousZoom = clampMindMapZoom(state.mindMapZoom);
+  const clampedZoom = clampMindMapZoom(nextZoom);
+
+  if (Math.abs(previousZoom - clampedZoom) < 0.01) {
+    return;
+  }
+
+  let anchorX = null;
+  let anchorY = null;
+
+  if (viewport) {
+    anchorX = (viewport.scrollLeft + viewport.clientWidth / 2) / previousZoom;
+    anchorY = (viewport.scrollTop + viewport.clientHeight / 2) / previousZoom;
+  }
+
+  state.mindMapZoom = clampedZoom;
+  saveState();
+  renderMindMap();
+
+  if (anchorX !== null && anchorY !== null) {
+    requestAnimationFrame(() => {
+      const refreshedViewport = dom.sectionPanels["mind-map"]?.querySelector("#mind-map-viewport");
+      if (!refreshedViewport) {
+        return;
+      }
+
+      refreshedViewport.scrollLeft = Math.max(0, anchorX * clampedZoom - refreshedViewport.clientWidth / 2);
+      refreshedViewport.scrollTop = Math.max(0, anchorY * clampedZoom - refreshedViewport.clientHeight / 2);
+    });
+  }
 }
 
 function toggleNodeExpansion(nodeId) {
@@ -1284,6 +1376,7 @@ function saveState() {
         quizAttempts: state.quizAttempts,
         matchingDefinitionOrder: state.matchingDefinitionOrder,
         expandedNodeIds: state.expandedNodeIds,
+        mindMapZoom: state.mindMapZoom,
       })
     );
   } catch (error) {
@@ -1311,6 +1404,12 @@ function handleMindMapPanelClick(event) {
       collapseAllNodes();
     } else if (action === "center-root") {
       centerMindMap();
+    } else if (action === "zoom-in") {
+      adjustMindMapZoom("in");
+    } else if (action === "zoom-out") {
+      adjustMindMapZoom("out");
+    } else if (action === "zoom-reset") {
+      resetMindMapZoom();
     }
     return;
   }
@@ -1389,6 +1488,41 @@ function getExpandableNodeIds() {
       .filter((node) => Array.isArray(node.children) && node.children.length > 0)
       .map((node) => node.id)
   );
+}
+
+function getMindMapLayout() {
+  const root = scaleMindMapNode(window.appData.mindMap.root);
+  const nodes = window.appData.mindMap.nodes.map((node) => scaleMindMapNode(node));
+  return {
+    width: Math.round(window.appData.mindMap.width * MIND_MAP_LAYOUT_SCALE),
+    height: Math.round(window.appData.mindMap.height * MIND_MAP_LAYOUT_SCALE),
+    root,
+    nodesById: new Map([ [root.id, root], ...nodes.map((node) => [node.id, node]) ]),
+  };
+}
+
+function scaleMindMapNode(node) {
+  return {
+    ...node,
+    x: Math.round(node.x * MIND_MAP_LAYOUT_SCALE),
+    y: Math.round(node.y * MIND_MAP_LAYOUT_SCALE),
+  };
+}
+
+function clampMindMapZoom(value) {
+  return Math.min(MIND_MAP_ZOOM_MAX, Math.max(MIND_MAP_ZOOM_MIN, Number(value) || 1));
+}
+
+function getDefaultMindMapZoom() {
+  if (window.innerWidth <= 560) {
+    return 0.78;
+  }
+
+  if (window.innerWidth <= 900) {
+    return 0.9;
+  }
+
+  return 1;
 }
 
 function showToast(message) {
