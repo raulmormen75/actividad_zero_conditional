@@ -1102,7 +1102,7 @@ function renderQuiz() {
     </div>
     <div class="question-card">
       <h3>${escapeHtml(question.prompt)}</h3>
-      <p class="question-support">Aplica la estructura del zero conditional y el presente simple en ambas cláusulas.</p>
+      ${renderQuizPromptReference(question)}
       <div class="quiz-options">
         ${renderQuizOptions(question)}
       </div>
@@ -1124,6 +1124,21 @@ function renderQuiz() {
   `;
 }
 
+function renderQuizPromptReference(question) {
+  if (!question.promptEs) {
+    return "";
+  }
+
+  return `
+    <div class="question-reference">
+      <span class="flag-heading question-reference__label">
+        <img src="assets/svg/mx-flag.svg" alt="Bandera de M&eacute;xico">
+        Espa&ntilde;ol de M&eacute;xico
+      </span>
+      <p>${escapeHtml(question.promptEs)}</p>
+    </div>
+  `;
+}
 function renderQuizOptions(question) {
   const isResolved = state.resolvedQuestionIds.includes(question.id);
   const feedback = uiState.quizFeedback;

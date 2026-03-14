@@ -923,6 +923,25 @@ a {
     font-size: 0.94rem;
 }
 
+.question-reference {
+    display: grid;
+    gap: 8px;
+    margin-top: 10px;
+}
+
+.question-reference__label {
+    color: var(--text-body);
+    font-size: 0.82rem;
+    font-weight: 700;
+}
+
+.question-reference p {
+    margin: 0;
+    color: var(--text-body);
+    font-size: 0.94rem;
+    line-height: 1.5;
+}
+
 .quiz-options {
     display: grid;
     gap: 12px;

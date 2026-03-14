@@ -421,6 +421,8 @@ const appData = {
         id: "q1",
         prompt:
           "Zero conditional sentences describe results that are always true when the condition happens.",
+        promptEs:
+          "Las oraciones del zero conditional describen resultados que siempre son verdaderos cuando ocurre la condición.",
         answer: true,
         explanationEn:
           "Correct. The zero conditional describes predictable, repeated or universal results.",
@@ -431,6 +433,8 @@ const appData = {
         id: "q2",
         prompt:
           "In the zero conditional, one clause usually uses will to express the result.",
+        promptEs:
+          "En el zero conditional, una cláusula suele usar will para expresar el resultado.",
         answer: false,
         explanationEn:
           "Correct. Zero conditional uses the present simple in both clauses, not will.",
@@ -441,6 +445,8 @@ const appData = {
         id: "q3",
         prompt:
           "In many zero conditional sentences, when can replace if without changing the basic meaning.",
+        promptEs:
+          "En muchas oraciones con zero conditional, when puede reemplazar a if sin cambiar el significado básico.",
         answer: true,
         explanationEn:
           "Correct. If and when often work in the same way when the result is regular.",
@@ -451,6 +457,8 @@ const appData = {
         id: "q4",
         prompt:
           "A comma is required even when the result clause appears before the if clause.",
+        promptEs:
+          "La coma es obligatoria incluso cuando la cláusula de resultado aparece antes que la cláusula con if.",
         answer: false,
         explanationEn:
           "Correct. The comma is usually needed only when the if or when clause comes first.",
@@ -461,6 +469,8 @@ const appData = {
         id: "q5",
         prompt:
           "Zero conditional can be used for instructions such as software or classroom directions.",
+        promptEs:
+          "El zero conditional puede usarse para instrucciones, como indicaciones de software o del salón de clases.",
         answer: true,
         explanationEn:
           "Correct. Instructions often show the direct result of an action, so zero conditional fits well.",
@@ -471,6 +481,7 @@ const appData = {
     multipleChoice: [
       {
         id: "q6",
+        promptEs: "Si calientas agua a 100 grados Celsius, esta ____.",
         prompt: "If you heat water to 100°C, it ____.",
         options: [
           { key: "a", text: "boiled" },
@@ -487,6 +498,7 @@ const appData = {
       },
       {
         id: "q7",
+        promptEs: "¿Qué oración es un ejemplo correcto de zero conditional?",
         prompt: "Which sentence is a correct zero conditional example?",
         options: [
           { key: "a", text: "If students study, they will pass faster." },
@@ -503,6 +515,8 @@ const appData = {
       },
       {
         id: "q8",
+        promptEs:
+          "¿Qué conector reemplaza con frecuencia a if en oraciones de zero conditional sobre resultados repetidos?",
         prompt:
           "Which connector often replaces if in zero conditional sentences about repeated results?",
         options: [
@@ -520,6 +534,8 @@ const appData = {
       },
       {
         id: "q9",
+        promptEs:
+          "¿Qué tiempo verbal se usa normalmente en ambas partes de una oración con zero conditional?",
         prompt:
           "Which tense is normally used in both parts of a zero conditional sentence?",
         options: [
@@ -537,6 +553,8 @@ const appData = {
       },
       {
         id: "q10",
+        promptEs:
+          "Elige la oración con puntuación correcta cuando la condición va primero.",
         prompt:
           "Choose the sentence with correct punctuation when the condition comes first.",
         options: [
@@ -556,6 +574,7 @@ const appData = {
     completeSentence: [
       {
         id: "q11",
+        promptEs: "Si ___ el botón rojo, suena la alarma.",
         prompt: "If you ___ the red button, the alarm sounds.",
         options: ["press", "pressed", "will press"],
         answer: 0,
@@ -566,6 +585,7 @@ const appData = {
       },
       {
         id: "q12",
+        promptEs: "Cuando Diego ___ tarde a casa, pierde el autobús escolar.",
         prompt: "When Diego ___ home late, he misses the school bus.",
         options: ["leave", "leaves", "left"],
         answer: 1,
@@ -576,6 +596,8 @@ const appData = {
       },
       {
         id: "q13",
+        promptEs:
+          "Si los maestros ___ instrucciones claras, los estudiantes siguen el proceso con más facilidad.",
         prompt: "If teachers ___ clear instructions, students follow the process more easily.",
         options: ["gives", "gave", "give"],
         answer: 2,
@@ -586,6 +608,7 @@ const appData = {
       },
       {
         id: "q14",
+        promptEs: "Si una planta ___ suficiente agua, crece bien.",
         prompt: "If a plant ___ enough water, it grows well.",
         options: ["gets", "get", "got"],
         answer: 0,
@@ -596,6 +619,7 @@ const appData = {
       },
       {
         id: "q15",
+        promptEs: "Cuando la biblioteca ___, los estudiantes entran en silencio.",
         prompt: "When the library ___, students go inside quietly.",
         options: ["open", "opens", "opened"],
         answer: 1,
