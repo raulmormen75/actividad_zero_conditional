@@ -857,15 +857,16 @@ function renderMatchingGame() {
     <div class="matching-status ${statusClass}">
       ${escapeHtml(uiState.matchingFeedback.message)}
     </div>
+    ${renderMatchingMobileFocus()}
     <div class="matching-board-scroller">
       <div class="matching-board" id="matching-board">
         <svg class="matching-connectors" id="matching-connectors" aria-hidden="true"></svg>
         <div class="matching-grid">
-          <div class="matching-column">
+          <div class="matching-column matching-column--terms">
             <h4>Conceptos</h4>
             ${window.appData.matching.map((item) => renderMatchingItem(item, "term")).join("")}
           </div>
-          <div class="matching-column">
+          <div class="matching-column matching-column--definitions" id="matching-definitions-anchor">
             <h4>Definiciones</h4>
             ${definitions.map((item) => renderMatchingItem(item, "definition")).join("")}
           </div>
@@ -885,6 +886,33 @@ function renderMatchingGame() {
   requestAnimationFrame(() => {
     drawMatchingConnectors();
   });
+}
+
+function renderMatchingMobileFocus() {
+  const selectedItem = state.selectedMatchingItem
+    ? matchingItemById.get(state.selectedMatchingItem)
+    : null;
+  const helperClass = selectedItem
+    ? "matching-mobile-focus is-active"
+    : "matching-mobile-focus";
+
+  return `
+    <div class="${helperClass}" aria-live="polite">
+      <span class="matching-mobile-focus__label">${
+        selectedItem ? "Concepto seleccionado" : "Modo móvil"
+      }</span>
+      <strong>${
+        selectedItem
+          ? escapeHtml(selectedItem.term)
+          : "Primero elige un concepto y luego baja a las definiciones."
+      }</strong>
+      <p>${
+        selectedItem
+          ? "Ahora toca abajo la definición que le corresponde."
+          : "Así verás cada bloque completo sin desplazarte de lado a lado."
+      }</p>
+    </div>
+  `;
 }
 
 function renderMatchingItem(item, side) {
@@ -937,6 +965,11 @@ function handleMatchingSelection(itemId, side) {
     };
     saveState();
     renderMatchingGame();
+    if (state.selectedMatchingItem && window.matchMedia("(max-width: 768px)").matches) {
+      requestAnimationFrame(() => {
+        scrollMatchingDefinitionsIntoView();
+      });
+    }
     return;
   }
 
@@ -1003,6 +1036,11 @@ function drawMatchingConnectors() {
   svg.setAttribute("width", String(boardRect.width));
   svg.setAttribute("height", String(boardRect.height));
 
+  if (window.matchMedia("(max-width: 768px)").matches) {
+    svg.innerHTML = "";
+    return;
+  }
+
   const paths = state.completedMatchingPairs
     .map((pairId) => {
       const termEl = board.querySelector(`[data-match-side="term"][data-match-id="${pairId}"]`);
@@ -1030,6 +1068,19 @@ function drawMatchingConnectors() {
     .join("");
 
   svg.innerHTML = paths;
+}
+
+function scrollMatchingDefinitionsIntoView() {
+  const definitionsAnchor = dom.sectionPanels.matching.querySelector("#matching-definitions-anchor");
+
+  if (!definitionsAnchor) {
+    return;
+  }
+
+  definitionsAnchor.scrollIntoView({
+    behavior: "smooth",
+    block: "start",
+  });
 }
 
 function renderQuiz() {
