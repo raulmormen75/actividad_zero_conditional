@@ -312,106 +312,151 @@ const appData = {
     {
       id: "m1",
       term: "Zero conditional",
+      termEs: "Condicional para hechos y resultados constantes.",
       definition:
         "A conditional form used for facts, routines, rules and results that always happen.",
+      definitionEs:
+        "Forma condicional que se usa para hechos, rutinas, reglas y resultados que siempre ocurren.",
       bilingualNote: "Condicional para hechos y resultados constantes.",
     },
     {
       id: "m2",
       term: "General truth",
+      termEs: "Verdad general que no depende de un momento específico.",
       definition:
         "An idea that stays true in the same way every time, not only today.",
+      definitionEs:
+        "Idea que se mantiene verdadera de la misma manera cada vez, no solo hoy.",
       bilingualNote: "Verdad general que no depende de un momento específico.",
     },
     {
       id: "m3",
       term: "Fact",
+      termEs: "Hecho comprobable.",
       definition:
         "A statement that describes a real and verifiable result, often scientific or observable.",
+      definitionEs:
+        "Enunciado que describe un resultado real y verificable, a menudo científico u observable.",
       bilingualNote: "Hecho comprobable.",
     },
     {
       id: "m4",
       term: "Routine",
+      termEs: "Acción repetida en la vida diaria o escolar.",
       definition:
         "A repeated action or sequence that happens regularly in class or daily life.",
+      definitionEs:
+        "Acción o secuencia repetida que sucede regularmente en clase o en la vida diaria.",
       bilingualNote: "Acción repetida en la vida diaria o escolar.",
     },
     {
       id: "m5",
       term: "Habit",
+      termEs: "Acción personal repetida con consecuencia habitual.",
       definition:
         "A personal repeated action that usually creates the same consequence.",
+      definitionEs:
+        "Acción personal repetida que suele crear la misma consecuencia.",
       bilingualNote: "Acción personal repetida con consecuencia habitual.",
     },
     {
       id: "m6",
       term: "Rule",
+      termEs: "Norma o regulación.",
       definition:
         "A regulation or norm that explains what people do when a condition appears.",
+      definitionEs:
+        "Regla o norma que explica lo que la gente hace cuando aparece una condición.",
       bilingualNote: "Norma o regulación.",
     },
     {
       id: "m7",
       term: "Instruction",
+      termEs: "Indicación que activa un resultado.",
       definition:
         "A direction that shows the result of pressing, choosing or doing something.",
+      definitionEs:
+        "Indicación que muestra el resultado de presionar, elegir o hacer algo.",
       bilingualNote: "Indicación que activa un resultado.",
     },
     {
       id: "m8",
       term: "If clause",
+      termEs: "Cláusula que expresa la condición.",
       definition:
         "The part that presents the condition in a zero conditional sentence.",
+      definitionEs:
+        "Parte que presenta la condición en una oración con zero conditional.",
       bilingualNote: "Cláusula que expresa la condición.",
     },
     {
       id: "m9",
       term: "Result clause",
+      termEs: "Cláusula que expresa la consecuencia.",
       definition:
         "The part that explains the regular consequence of the condition.",
+      definitionEs:
+        "Parte que explica la consecuencia regular de la condición.",
       bilingualNote: "Cláusula que expresa la consecuencia.",
     },
     {
       id: "m10",
       term: "Present simple",
+      termEs: "Tiempo verbal de ambas cláusulas.",
       definition:
         "The verb tense used in both clauses of the zero conditional.",
+      definitionEs:
+        "Tiempo verbal que se usa en ambas cláusulas del zero conditional.",
       bilingualNote: "Tiempo verbal de ambas cláusulas.",
     },
     {
       id: "m11",
       term: "Punctuation",
+      termEs: "Signos que ordenan la oración.",
       definition:
         "The writing system that helps place the comma correctly when the condition comes first.",
+      definitionEs:
+        "Sistema de puntuación que ayuda a colocar la coma correctamente cuando la condición va primero.",
       bilingualNote: "Signos que ordenan la oración.",
     },
     {
       id: "m12",
       term: "Comma",
+      termEs: "Coma después de la condición inicial.",
       definition:
         "The sign used after the if/when clause when that clause starts the sentence.",
+      definitionEs:
+        "Signo que se usa después de la cláusula con if/when cuando esa cláusula inicia la oración.",
       bilingualNote: "Coma después de la condición inicial.",
     },
     {
       id: "m13",
       term: "If",
+      termEs: "Conector de condición.",
       definition:
         "The connector that introduces a condition and can often alternate with when in this topic.",
+      definitionEs:
+        "Conector que introduce una condición y que en este tema a menudo puede alternarse con when.",
       bilingualNote: "Conector de condición.",
     },
     {
       id: "m14",
       term: "When",
+      termEs: "Conector para condiciones repetidas.",
       definition:
         "The connector that introduces a repeated condition with a regular result.",
+      definitionEs:
+        "Conector que introduce una condición repetida con un resultado regular.",
       bilingualNote: "Conector para condiciones repetidas.",
     },
     {
       id: "m15",
       term: "Cause and effect",
+      termEs: "Relación entre causa y resultado.",
       definition:
         "The relation in which one action regularly produces the same result.",
+      definitionEs:
+        "Relación en la que una acción produce regularmente el mismo resultado.",
       bilingualNote: "Relación entre causa y resultado.",
     },
   ],

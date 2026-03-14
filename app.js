@@ -930,6 +930,11 @@ function renderMatchingItem(item, side) {
   ]
     .filter(Boolean)
     .join(" ");
+  const englishText = side === "term" ? item.term : item.definition;
+  const translationText =
+    side === "term"
+      ? item.termEs || item.bilingualNote || ""
+      : item.definitionEs || "";
 
   return `
     <button
@@ -940,8 +945,17 @@ function renderMatchingItem(item, side) {
       ${isResolved ? "disabled" : ""}
       aria-pressed="${side === "term" ? String(isSelected) : "false"}"
     >
-      ${side === "term" ? escapeHtml(item.term) : escapeHtml(item.definition)}
-      ${side === "term" && item.bilingualNote ? `<small>${escapeHtml(item.bilingualNote)}</small>` : ""}
+      <span class="match-item__main">${escapeHtml(englishText)}</span>
+      ${
+        translationText
+          ? `<span class="match-item__translation">
+              <span class="match-item__translation-line">
+                <img src="assets/svg/mx-flag.svg" alt="Bandera de M&eacute;xico">
+                <span class="match-item__translation-text">${escapeHtml(translationText)}</span>
+              </span>
+            </span>`
+          : ""
+      }
     </button>
   `;
 }
@@ -1131,11 +1145,10 @@ function renderQuizPromptReference(question) {
 
   return `
     <div class="question-reference">
-      <span class="flag-heading question-reference__label">
+      <span class="question-reference__line">
         <img src="assets/svg/mx-flag.svg" alt="Bandera de M&eacute;xico">
-        Espa&ntilde;ol de M&eacute;xico
+        <span class="question-reference__text">${escapeHtml(question.promptEs)}</span>
       </span>
-      <p>${escapeHtml(question.promptEs)}</p>
     </div>
   `;
 }
