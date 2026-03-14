@@ -353,13 +353,12 @@ function renderMindMap() {
   dom.sectionPanels["mind-map"].innerHTML = `
     <div class="panel-header">
       <div>
-        <div class="section-chip"><strong>Sección 1</strong><span>Mapa mental bilingüe</span></div>
         <h3>Zero Conditional en una sola vista</h3>
         <p class="panel-copy">
           Arrastra el lienzo, usa las barras de desplazamiento y abre cada nodo para revisar explicación breve y ejemplo.
         </p>
+        <p class="panel-meta">Nodos visibles ahora: <strong>${visibleNodes.length + 1}</strong></p>
       </div>
-      <div class="matching-progress">Nodos visibles: ${visibleNodes.length + 1}</div>
     </div>
     <div class="mind-toolbar">
       <button type="button" class="surface-button" data-action="expand-all" ${expandAllActive ? "disabled" : ""}>
@@ -740,13 +739,12 @@ function renderMatchingGame() {
   dom.sectionPanels.matching.innerHTML = `
     <div class="panel-header">
       <div>
-        <div class="section-chip"><strong>Sección 2</strong><span>Actividad de relación</span></div>
         <h3>Relaciona concepto y definición</h3>
         <p class="panel-copy">
           Elige primero un concepto. Después toca la definición correcta. Cada par correcto queda bloqueado.
         </p>
+        <p class="panel-meta">Pares resueltos: <strong>${completedCount}</strong> de ${window.appData.matching.length}</p>
       </div>
-      <div class="matching-progress">${completedCount} de ${window.appData.matching.length} pares resueltos</div>
     </div>
     <div class="matching-status ${statusClass}">
       ${escapeHtml(uiState.matchingFeedback.message)}
@@ -932,30 +930,18 @@ function renderQuiz() {
   state.currentQuizIndex = currentIndex;
   const question = quizItems[currentIndex];
   const completedCount = state.resolvedQuestionIds.length;
-  const progressByQuestion = ((currentIndex + 1) / totalQuestions) * 100;
 
   dom.sectionPanels.quiz.innerHTML = `
     <div class="panel-header">
       <div>
-        <div class="section-chip"><strong>Sección 3</strong><span>Evaluación interactiva</span></div>
         <h3>Reactivo ${currentIndex + 1} de ${totalQuestions}</h3>
         <p class="panel-copy">
           Contesta hasta acertar. Cada intento incorrecto resta un punto y se acumula en el contador de errores.
         </p>
-      </div>
-      <div class="quiz-progress-label">${completedCount} de ${totalQuestions} reactivos resueltos</div>
-    </div>
-    <div class="quiz-progress-card">
-      <div class="quiz-progress-meta">
-        <span>${escapeHtml(question.typeLabel)}</span>
-        <span>Progreso interno: ${currentIndex + 1}/${totalQuestions}</span>
-      </div>
-      <div class="progress-track">
-        <span style="width:${progressByQuestion}%"></span>
+        <p class="panel-meta">Tipo: <strong>${escapeHtml(question.typeLabel)}</strong>. Resueltos: <strong>${completedCount}</strong> de ${totalQuestions}</p>
       </div>
     </div>
     <div class="question-card">
-      <div class="question-chip">${escapeHtml(question.typeLabel)}</div>
       <h3>${escapeHtml(question.prompt)}</h3>
       <p class="question-support">Aplica la estructura del zero conditional y el presente simple en ambas cláusulas.</p>
       <div class="quiz-options">

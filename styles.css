@@ -546,11 +546,11 @@ a {
     justify-content: space-between;
     align-items: flex-start;
     gap: 18px;
-    margin-bottom: 18px;
+    margin-bottom: 14px;
 }
 
 .panel-header h3 {
-    margin: 0 0 8px;
+    margin: 0 0 6px;
     font-size: 1.48rem;
     color: var(--ifr-blue-dark);
 }
@@ -564,20 +564,15 @@ a {
     color: var(--text-body);
 }
 
-.section-chip {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 8px 12px;
-    border-radius: 999px;
-    background: rgba(28, 30, 90, 0.06);
-    color: var(--ifr-blue-dark);
-    font-size: 0.84rem;
-    font-weight: 700;
+.panel-meta {
+    margin-top: 8px;
+    font-size: 0.9rem;
+    color: var(--ifr-blue-mid);
+    font-weight: 600;
 }
 
-.section-chip strong {
-    color: var(--ifr-green);
+.panel-meta strong {
+    color: var(--ifr-blue-dark);
 }
 
 .mind-toolbar {
@@ -736,19 +731,6 @@ a {
     margin-bottom: 18px;
 }
 
-.matching-progress,
-.quiz-progress-label {
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    padding: 10px 14px;
-    border-radius: 999px;
-    background: rgba(28, 30, 90, 0.06);
-    color: var(--ifr-blue-dark);
-    font-size: 0.9rem;
-    font-weight: 700;
-}
-
 .matching-status {
     padding: 14px 18px;
     border-radius: 16px;
@@ -844,38 +826,6 @@ a {
     filter: drop-shadow(0 0 8px rgba(44, 229, 30, 0.65));
 }
 
-.quiz-progress-card {
-    padding: 18px 20px;
-    border-radius: 20px;
-    background: rgba(28, 30, 90, 0.05);
-    margin-bottom: 18px;
-}
-
-.quiz-progress-meta {
-    display: flex;
-    justify-content: space-between;
-    gap: 14px;
-    margin-bottom: 12px;
-    font-weight: 700;
-    color: var(--ifr-blue-dark);
-}
-
-.progress-track {
-    height: 10px;
-    border-radius: 999px;
-    background: rgba(28, 30, 90, 0.08);
-    overflow: hidden;
-}
-
-.progress-track span {
-    display: block;
-    height: 100%;
-    width: 0;
-    border-radius: 999px;
-    background: linear-gradient(90deg, var(--ifr-green), #7AF26D);
-    transition: width var(--transition-base);
-}
-
 .question-card {
     padding: 24px;
     border-radius: 24px;
@@ -884,20 +834,8 @@ a {
     box-shadow: 0 18px 28px rgba(28, 30, 90, 0.06);
 }
 
-.question-chip {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 8px 12px;
-    border-radius: 999px;
-    background: rgba(43, 47, 143, 0.08);
-    color: var(--ifr-blue-dark);
-    font-size: 0.85rem;
-    font-weight: 700;
-}
-
 .question-card h3 {
-    margin: 14px 0 18px;
+    margin: 0 0 18px;
     font-size: clamp(1.25rem, 1.8vw, 1.6rem);
     line-height: 1.35;
     color: var(--ifr-blue-dark);
