@@ -125,7 +125,7 @@ a {
     gap: 16px;
     align-items: center;
     padding: 18px 0;
-    transition: grid-template-columns 0.18s ease-out, gap 0.18s ease-out, padding 0.18s ease-out;
+    transition: padding 0.2s ease-out;
 }
 
 .brand-block {
@@ -185,7 +185,8 @@ a {
     max-height: 120px;
     overflow: hidden;
     opacity: 1;
-    transition: margin-top 0.16s ease-out, opacity 0.14s ease-out, max-height 0.18s ease-out;
+    transform: translateY(0);
+    transition: margin-top 0.16s ease-out, opacity 0.14s ease-out, transform 0.18s ease-out;
 }
 
 .flag-label,
@@ -232,9 +233,8 @@ a {
     max-height: 420px;
     overflow: clip;
     transform-origin: top right;
-    transition: opacity 0.16s ease-out, transform 0.18s ease-out, max-height 0.18s ease-out,
-        width 0.18s ease-out, padding 0.18s ease-out, border-color 0.16s ease-out,
-        box-shadow 0.16s ease-out, margin 0.18s ease-out;
+    transition: opacity 0.16s ease-out, transform 0.18s ease-out, border-color 0.16s ease-out,
+        box-shadow 0.16s ease-out;
 }
 
 .stats-header {
@@ -297,7 +297,6 @@ a {
 }
 
 .app-header.is-compact .header-shell {
-    gap: 12px;
     padding: 10px 0;
 }
 
@@ -321,6 +320,7 @@ a {
     margin-top: 0;
     max-height: 0;
     opacity: 0;
+    transform: translateY(-10px);
     pointer-events: none;
 }
 

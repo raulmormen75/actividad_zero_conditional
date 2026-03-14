@@ -289,6 +289,8 @@ function updateHeaderVisibility(forceSync = false) {
 
   const isDesktopHeader = window.innerWidth > 768;
   const currentScrollY = Math.max(window.scrollY || 0, 0);
+  const compactThreshold = 96;
+  const expandThreshold = 18;
 
   if (!isDesktopHeader) {
     dom.appHeader.classList.remove("is-compact", "is-stats-hidden");
@@ -296,7 +298,16 @@ function updateHeaderVisibility(forceSync = false) {
     return;
   }
 
-  const shouldCompactHeader = forceSync ? currentScrollY > 28 : currentScrollY > 36;
+  let shouldCompactHeader = dom.appHeader.classList.contains("is-compact");
+
+  if (forceSync) {
+    shouldCompactHeader = currentScrollY > compactThreshold;
+  } else if (currentScrollY >= compactThreshold) {
+    shouldCompactHeader = true;
+  } else if (currentScrollY <= expandThreshold) {
+    shouldCompactHeader = false;
+  }
+
   dom.appHeader.classList.toggle("is-compact", shouldCompactHeader);
   dom.appHeader.classList.toggle("is-stats-hidden", shouldCompactHeader);
 
