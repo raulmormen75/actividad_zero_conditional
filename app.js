@@ -98,7 +98,6 @@ function cacheDom() {
   dom.playExampleBtn = document.getElementById("play-example-btn");
   dom.playExampleSlowBtn = document.getElementById("play-example-slow-btn");
   dom.conceptAudioControls = document.getElementById("concept-audio-controls");
-  dom.conceptAudioNote = document.getElementById("concept-audio-note");
   dom.modalCloseBtn = document.getElementById("close-modal-btn");
 }
 

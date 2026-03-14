@@ -1156,12 +1156,6 @@ a {
     letter-spacing: 0.04em;
 }
 
-.audio-note {
-    margin: 12px 0 0;
-    font-size: 0.82rem;
-    color: rgba(51, 65, 85, 0.86);
-}
-
 .feedback-toast {
     position: fixed;
     left: 50%;
