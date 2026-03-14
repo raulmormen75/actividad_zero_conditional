@@ -29,6 +29,7 @@ const uiState = {
     text: "",
     rate: 1,
     utterance: null,
+    playbackId: 0,
   },
   matchingFeedback: {
     type: "info",
@@ -618,6 +619,7 @@ function playConceptExampleAudio(rate) {
   stopConceptExampleAudio();
 
   const utterance = new SpeechSynthesisUtterance(exampleText);
+  const playbackId = Date.now() + Math.random();
   utterance.lang = "en-US";
   utterance.rate = rate;
   utterance.pitch = 1.08;
@@ -633,15 +635,29 @@ function playConceptExampleAudio(rate) {
     text: exampleText,
     rate,
     utterance,
+    playbackId,
   };
 
   updateConceptAudioButtons(rate);
 
   utterance.onend = () => {
+    if (uiState.speechPlayback.playbackId !== playbackId) {
+      return;
+    }
     stopConceptExampleAudio(false);
   };
 
-  utterance.onerror = () => {
+  utterance.onerror = (event) => {
+    if (uiState.speechPlayback.playbackId !== playbackId) {
+      return;
+    }
+
+    const errorType = typeof event?.error === "string" ? event.error.toLowerCase() : "";
+    if (errorType === "canceled" || errorType === "cancelled" || errorType === "interrupted") {
+      stopConceptExampleAudio(false);
+      return;
+    }
+
     stopConceptExampleAudio(false);
     showToast("No se pudo reproducir el ejemplo en este momento.");
     announceStatus("No se pudo reproducir el ejemplo en este momento.");
@@ -662,6 +678,7 @@ function stopConceptExampleAudio(cancelSpeech = true) {
     text: "",
     rate: 1,
     utterance: null,
+    playbackId: 0,
   };
 
   updateConceptAudioButtons(null);
