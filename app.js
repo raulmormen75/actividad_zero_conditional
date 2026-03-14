@@ -75,7 +75,6 @@ function cacheDom() {
   dom.statCorrect = document.getElementById("stat-correct");
   dom.statErrors = document.getElementById("stat-errors");
   dom.statScore = document.getElementById("stat-score");
-  dom.resetProgressBtn = document.getElementById("reset-progress-btn");
   dom.prevSectionBtn = document.getElementById("prev-section-btn");
   dom.nextSectionBtn = document.getElementById("next-section-btn");
   dom.currentSectionTitle = document.getElementById("current-section-title");
@@ -237,8 +236,6 @@ function bindStaticEvents() {
 
   dom.prevSectionBtn.addEventListener("click", () => changeSection(-1));
   dom.nextSectionBtn.addEventListener("click", () => changeSection(1));
-  dom.resetProgressBtn.addEventListener("click", () => resetProgress());
-
   dom.sectionPanels["mind-map"].addEventListener("click", handleMindMapPanelClick);
   dom.sectionPanels.matching.addEventListener("click", handleMatchingPanelClick);
   dom.sectionPanels.quiz.addEventListener("click", handleQuizPanelClick);
@@ -400,11 +397,23 @@ function renderMindMap() {
 
 function renderMindNode(node) {
   const hasChildren = Array.isArray(node.children) && node.children.length > 0;
-  const isExpanded = state.expandedNodeIds.includes(node.id);
+  const isRootNode = node.level === 0;
+  const expandableCount = getExpandableNodeIds().size;
+  const isExpanded = isRootNode
+    ? expandableCount > 0 && state.expandedNodeIds.length === expandableCount
+    : state.expandedNodeIds.includes(node.id);
   const levelClass =
     node.level === 0 ? "mind-node--root" : node.level === 1 ? "mind-node--level1" : "mind-node--level2";
   const metaText =
     node.level === 0 ? "Tema principal" : hasChildren ? `${node.children.length} subtemas` : "Detalle";
+  const toggleLabel = isRootNode
+    ? isExpanded
+      ? "Contraer todo el mapa mental"
+      : "Expandir todo el mapa mental"
+    : isExpanded
+    ? "Ocultar subtemas"
+    : "Mostrar subtemas";
+  const toggleSymbol = isExpanded ? "−" : "+";
 
   return `
     <div class="mind-node ${levelClass}" style="left:${node.x}px; top:${node.y}px;">
@@ -414,7 +423,7 @@ function renderMindNode(node) {
       </button>
       ${
         hasChildren
-          ? `<button type="button" class="node-toggle" data-toggle-node="${node.id}" aria-expanded="${String(isExpanded)}" aria-label="${isExpanded ? "Ocultar subtemas" : "Mostrar subtemas"}">${isExpanded ? "−" : "+"}</button>`
+          ? `<button type="button" class="node-toggle" data-toggle-node="${node.id}" aria-expanded="${String(isExpanded)}" aria-label="${toggleLabel}">${toggleSymbol}</button>`
           : ""
       }
     </div>
@@ -612,6 +621,15 @@ function setMindMapZoom(nextZoom) {
 
 function toggleNodeExpansion(nodeId) {
   const expandableIds = getExpandableNodeIds();
+  if (nodeId === window.appData.mindMap.root.id) {
+    if (state.expandedNodeIds.length === expandableIds.size) {
+      collapseAllNodes();
+    } else {
+      expandAllNodes();
+    }
+    return;
+  }
+
   if (!expandableIds.has(nodeId)) {
     return;
   }
@@ -1338,7 +1356,7 @@ function renderFinalSummary() {
       ? "Buen manejo del tema. Solo conviene reforzar detalles finos."
       : mastery >= 60
       ? "Base funcional. Repasa conectores, puntuación y presente simple."
-      : "Necesitas reforzar la base. Revisa el mapa mental y vuelve a intentar.";
+      : "Necesitas reforzar la base. Revisa el mapa mental para consolidar la estructura.";
   const pendingMatching = window.appData.matching.length - state.completedMatchingPairs.length;
   const pendingNote =
     pendingMatching > 0
@@ -1498,16 +1516,6 @@ function handleQuizPanelClick(event) {
     state.currentQuizIndex = clampNumber(state.currentQuizIndex + direction, 0, quizItems.length - 1);
     renderQuiz();
     saveState();
-    return;
-  }
-
-  const summaryButton = event.target.closest("[data-summary-action]");
-  if (summaryButton) {
-    if (summaryButton.dataset.summaryAction === "retry-quiz") {
-      resetQuizProgress();
-    } else {
-      resetProgress();
-    }
     return;
   }
 

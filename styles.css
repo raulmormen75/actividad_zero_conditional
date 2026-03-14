@@ -1093,6 +1093,10 @@ a {
     margin-top: 18px;
 }
 
+.summary-actions {
+    display: none;
+}
+
 .quiz-navigation {
     justify-content: space-between;
     align-items: center;
