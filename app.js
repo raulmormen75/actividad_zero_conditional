@@ -28,6 +28,7 @@ const uiState = {
   lastFocusedElement: null,
   lastScrollY: 0,
   headerScrollFrame: null,
+  headerStateLockUntil: 0,
   speechPlayback: {
     isPlaying: false,
     text: "",
@@ -253,7 +254,6 @@ function bindStaticEvents() {
   dom.playExampleSlowBtn.addEventListener("click", () => playConceptExampleAudio(0.5));
   window.addEventListener("keydown", handleGlobalKeydown);
   window.addEventListener("resize", handleResponsiveRedraw);
-  window.addEventListener("scroll", handleWindowScroll, { passive: true });
   updateHeaderVisibility(true);
 }
 
@@ -271,47 +271,14 @@ function handleResponsiveRedraw() {
   }
 }
 
-function handleWindowScroll() {
-  if (uiState.headerScrollFrame) {
-    return;
-  }
-
-  uiState.headerScrollFrame = window.requestAnimationFrame(() => {
-    updateHeaderVisibility();
-    uiState.headerScrollFrame = null;
-  });
-}
-
 function updateHeaderVisibility(forceSync = false) {
   if (!dom.appHeader) {
     return;
   }
 
-  const isDesktopHeader = window.innerWidth > 768;
-  const currentScrollY = Math.max(window.scrollY || 0, 0);
-  const compactThreshold = 96;
-  const expandThreshold = 18;
-
-  if (!isDesktopHeader) {
-    dom.appHeader.classList.remove("is-compact", "is-stats-hidden");
-    uiState.lastScrollY = currentScrollY;
-    return;
-  }
-
-  let shouldCompactHeader = dom.appHeader.classList.contains("is-compact");
-
-  if (forceSync) {
-    shouldCompactHeader = currentScrollY > compactThreshold;
-  } else if (currentScrollY >= compactThreshold) {
-    shouldCompactHeader = true;
-  } else if (currentScrollY <= expandThreshold) {
-    shouldCompactHeader = false;
-  }
-
-  dom.appHeader.classList.toggle("is-compact", shouldCompactHeader);
-  dom.appHeader.classList.toggle("is-stats-hidden", shouldCompactHeader);
-
-  uiState.lastScrollY = currentScrollY;
+  dom.appHeader.classList.remove("is-compact", "is-stats-hidden");
+  uiState.headerStateLockUntil = 0;
+  uiState.lastScrollY = Math.max(window.scrollY || 0, 0);
 }
 
 function changeSection(direction) {

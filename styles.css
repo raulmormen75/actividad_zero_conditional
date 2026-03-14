@@ -107,8 +107,7 @@ a {
 }
 
 .app-header {
-    position: sticky;
-    top: 0;
+    position: relative;
     z-index: 30;
     background: rgba(248, 250, 252, 0.92);
     backdrop-filter: blur(18px);
